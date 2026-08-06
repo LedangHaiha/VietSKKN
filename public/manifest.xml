@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp 
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+  xsi:type="TaskPaneApp">
+
+  <Id>62711df7-b170-491c-954a-71ce3ebc82f1</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>AI SÁNG KIẾN PRO</ProviderName>
+  <DefaultLocale>vi-VN</DefaultLocale>
+  <DisplayName DefaultValue="AI Sáng Kiến Pro - Trợ lý MS Word" />
+  <Description DefaultValue="Plugin gọi 7 AI Agents trực tiếp ngay trong Microsoft Word Desktop để viết SKKN chuẩn GDPT 2018." />
+
+  <IconUrl DefaultValue="https://localhost:3000/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/icon-64.png" />
+
+  <SupportUrl DefaultValue="https://localhost:3000/support" />
+
+  <AppDomains>
+    <AppDomain>https://localhost:3000</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Document" />
+  </Hosts>
+
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html" />
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+</OfficeApp>
