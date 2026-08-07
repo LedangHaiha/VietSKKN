@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Eye, Edit3, Save, Sparkles, FileText, CheckCircle2, Languages, GitFork } from 'lucide-react';
+import { Eye, Edit3, Save, Sparkles, FileText, CheckCircle2, Languages, GitFork, Bot, PenTool } from 'lucide-react';
 import { SKKNProject, SKKNSectionCode } from '../../types/skkn';
 import { EnglishAbstractModal } from './EnglishAbstractModal';
 import { ConceptGraphView } from './ConceptGraphView';
+import { generateSubSectionContentWithAi } from '../../services/sectionAiWriterService';
 
 interface DocumentEditorViewProps {
   project: SKKNProject;
@@ -17,6 +18,7 @@ export const DocumentEditorView: React.FC<DocumentEditorViewProps> = ({
   const [viewMode, setViewMode] = useState<'split' | 'edit' | 'preview'>('split');
   const [showEnglishModal, setShowEnglishModal] = useState<boolean>(false);
   const [showGraphModal, setShowGraphModal] = useState<boolean>(false);
+  const [loadingSubId, setLoadingSubId] = useState<string | null>(null);
 
   const activeSection = project.sections.find((s) => s.code === activeSectionCode) || project.sections[0];
 
@@ -38,6 +40,28 @@ export const DocumentEditorView: React.FC<DocumentEditorViewProps> = ({
       sections: updatedSections,
       updatedAt: new Date().toISOString()
     });
+  };
+
+  const handleRunAiForSubSection = async (
+    subId: string,
+    sectionTitle: string,
+    subNumbering: string,
+    currentContent: string,
+    action: 'generate' | 'polish' | 'expand'
+  ) => {
+    setLoadingSubId(subId);
+    try {
+      const generatedText = await generateSubSectionContentWithAi({
+        project,
+        sectionTitle,
+        subNumbering,
+        currentContent,
+        action
+      });
+      handleSubSectionContentChange(subId, generatedText);
+    } finally {
+      setLoadingSubId(null);
+    }
   };
 
   return (
@@ -132,20 +156,56 @@ export const DocumentEditorView: React.FC<DocumentEditorViewProps> = ({
             </div>
 
             <div className="space-y-6">
-              {activeSection.subSections.map((sub) => (
-                <div key={sub.id} className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-200">
-                    {sub.subNumbering}
-                  </label>
-                  <textarea
-                    rows={6}
-                    value={sub.content}
-                    onChange={(e) => handleSubSectionContentChange(sub.id, e.target.value)}
-                    placeholder={`Nhập nội dung cho tiểu mục ${sub.title}...`}
-                    className="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 text-slate-100 text-xs leading-relaxed focus:border-indigo-500 focus:outline-none transition font-sans"
-                  />
-                </div>
-              ))}
+              {activeSection.subSections.map((sub) => {
+                const isWritingThis = loadingSubId === sub.id;
+
+                return (
+                  <div key={sub.id} className="space-y-2.5 p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80 hover:border-slate-700 transition">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <label className="block text-xs font-bold text-indigo-300">
+                        {sub.subNumbering}
+                      </label>
+
+                      <div className="flex items-center space-x-1.5 overflow-x-auto">
+                        <button
+                          disabled={isWritingThis}
+                          onClick={() => handleRunAiForSubSection(sub.id, sub.title, sub.subNumbering, sub.content, 'generate')}
+                          className="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 text-[11px] font-semibold flex items-center space-x-1 transition flex-shrink-0"
+                        >
+                          <Sparkles className="w-3 h-3 text-indigo-400" />
+                          <span>{isWritingThis ? 'AI đang viết...' : '✨ AI Viết Mục Này'}</span>
+                        </button>
+
+                        <button
+                          disabled={isWritingThis}
+                          onClick={() => handleRunAiForSubSection(sub.id, sub.title, sub.subNumbering, sub.content, 'polish')}
+                          className="px-2.5 py-1 rounded-lg bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white border border-purple-500/30 text-[11px] font-semibold flex items-center space-x-1 transition flex-shrink-0"
+                        >
+                          <Bot className="w-3 h-3 text-purple-400" />
+                          <span>🪄 Chuốt Văn Phong</span>
+                        </button>
+
+                        <button
+                          disabled={isWritingThis}
+                          onClick={() => handleRunAiForSubSection(sub.id, sub.title, sub.subNumbering, sub.content, 'expand')}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 text-[11px] font-semibold flex items-center space-x-1 transition flex-shrink-0"
+                        >
+                          <PenTool className="w-3 h-3 text-emerald-400" />
+                          <span>💡 Gợi Ý Mở Rộng</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <textarea
+                      rows={7}
+                      value={sub.content}
+                      onChange={(e) => handleSubSectionContentChange(sub.id, e.target.value)}
+                      placeholder={`Bấm "✨ AI Viết Mục Này" để AI tự động soạn thảo hoặc nhập nội dung cho tiểu mục ${sub.title}...`}
+                      className="w-full p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 text-xs leading-relaxed focus:border-indigo-500 focus:outline-none transition font-sans"
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
