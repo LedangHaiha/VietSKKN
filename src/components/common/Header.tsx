@@ -12,6 +12,7 @@ interface HeaderProps {
   onOpenShareModal?: () => void;
   onOpenTemplateModal?: () => void;
   onOpenContentDrivenModal?: () => void;
+  onAutoGenerateFullSKKN?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -21,7 +22,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenVoiceModal,
   onOpenShareModal,
   onOpenTemplateModal,
-  onOpenContentDrivenModal
+  onOpenContentDrivenModal,
+  onAutoGenerateFullSKKN,
 }) => {
   const handleQuickExportDocx = async () => {
     if (!activeProject) return;
@@ -82,6 +84,17 @@ export const Header: React.FC<HeaderProps> = ({
 
         {activeProject && (
           <div className="flex items-center space-x-2 border-l border-slate-800 pl-2">
+            {onAutoGenerateFullSKKN && (
+              <button
+                onClick={onAutoGenerateFullSKKN}
+                title="AI tự động sinh ra nội dung tất cả các mục theo Công văn 3330 & Nghị định 30"
+                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-teal-600/30 transition"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">🚀 AI Tự Động Viết SKKN</span>
+              </button>
+            )}
+
             {onOpenContentDrivenModal && (
               <button
                 onClick={onOpenContentDrivenModal}

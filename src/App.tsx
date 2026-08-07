@@ -26,6 +26,8 @@ import {
   getActiveProjectId,
 } from './services/storageService';
 
+import { generateFullSKKNContent } from './services/fullSkknAutoGeneratorService';
+
 export const App: React.FC = () => {
   const [projects, setProjects] = useState<SKKNProject[]>([]);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
@@ -34,6 +36,7 @@ export const App: React.FC = () => {
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
   const [showContentDrivenModal, setShowContentDrivenModal] = useState<boolean>(false);
+  const [isAutoGeneratingFull, setIsAutoGeneratingFull] = useState<boolean>(false);
 
   useEffect(() => {
     const loaded = getStoredProjects();
@@ -61,6 +64,23 @@ export const App: React.FC = () => {
     const newProjects = projects.map((p) => (p.id === updated.id ? updated : p));
     setProjects(newProjects);
     saveProjectsToStorage(newProjects);
+  };
+
+  const handleAutoGenerateFullSKKN = async () => {
+    if (!activeProject) return;
+    setIsAutoGeneratingFull(true);
+    try {
+      const generatedSections = await generateFullSKKNContent(activeProject);
+      const updated: SKKNProject = {
+        ...activeProject,
+        sections: generatedSections,
+        updatedAt: new Date().toISOString()
+      };
+      handleUpdateProject(updated);
+      setActiveTab('editor');
+    } finally {
+      setIsAutoGeneratingFull(false);
+    }
   };
 
   const handleApplyParsedTemplate = (parsed: ParsedSKKNTemplate) => {
@@ -152,6 +172,7 @@ export const App: React.FC = () => {
         onOpenShareModal={() => setShowShareModal(true)}
         onOpenTemplateModal={() => setShowTemplateModal(true)}
         onOpenContentDrivenModal={() => setShowContentDrivenModal(true)}
+        onAutoGenerateFullSKKN={handleAutoGenerateFullSKKN}
       />
 
       {activeProject && (
