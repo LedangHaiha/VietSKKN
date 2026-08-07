@@ -1,5 +1,6 @@
 import { AgentType } from '../types/agent';
 import { SKKNProject, SKKNSolution, SKKNEvidence } from '../types/skkn';
+import { MASTER_SKKN_PROMPT_ANTIGRAVITY } from '../constants/masterSkknPrompt';
 
 export interface AgentActionPayload {
   agentType: AgentType;
