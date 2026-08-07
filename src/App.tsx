@@ -15,8 +15,9 @@ import { SettingsView } from './features/settings/SettingsView';
 import { VoiceAgentModal } from './features/agent-workspace/VoiceAgentModal';
 import { ShareProjectModal } from './components/common/ShareProjectModal';
 import { TemplateUploadModal } from './features/project-wizard/TemplateUploadModal';
+import { ContentDrivenWizardModal } from './features/project-wizard/ContentDrivenWizardModal';
 import { ParsedSKKNTemplate } from './services/templateParserService';
-import { SKKNProject, SKKNSectionCode } from './types/skkn';
+import { SKKNProject, SKKNSection, SKKNSectionCode } from './types/skkn';
 import {
   createEmptyProject,
   getStoredProjects,
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
   const [showVoiceModal, setShowVoiceModal] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [showTemplateModal, setShowTemplateModal] = useState<boolean>(false);
+  const [showContentDrivenModal, setShowContentDrivenModal] = useState<boolean>(false);
 
   useEffect(() => {
     const loaded = getStoredProjects();
@@ -70,6 +72,18 @@ export const App: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
     handleUpdateProject(updated);
+  };
+
+  const handleApplyGeneratedContentDrivenSKKN = (title: string, sections: SKKNSection[]) => {
+    if (!activeProject) return;
+    const updated: SKKNProject = {
+      ...activeProject,
+      title,
+      sections,
+      updatedAt: new Date().toISOString()
+    };
+    handleUpdateProject(updated);
+    setActiveTab('editor');
   };
 
   const handleCreateNewProject = () => {
@@ -137,6 +151,7 @@ export const App: React.FC = () => {
         onOpenVoiceModal={() => setShowVoiceModal(true)}
         onOpenShareModal={() => setShowShareModal(true)}
         onOpenTemplateModal={() => setShowTemplateModal(true)}
+        onOpenContentDrivenModal={() => setShowContentDrivenModal(true)}
       />
 
       {activeProject && (
@@ -229,6 +244,14 @@ export const App: React.FC = () => {
           project={activeProject}
           onClose={() => setShowTemplateModal(false)}
           onApplyTemplate={handleApplyParsedTemplate}
+        />
+      )}
+
+      {showContentDrivenModal && activeProject && (
+        <ContentDrivenWizardModal
+          project={activeProject}
+          onClose={() => setShowContentDrivenModal(false)}
+          onApplyGeneratedSections={handleApplyGeneratedContentDrivenSKKN}
         />
       )}
     </div>

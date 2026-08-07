@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, FileText, Download, Plus, Bot, Mic, Share2, Upload } from 'lucide-react';
+import { Sparkles, FileText, Download, Plus, Bot, Mic, Share2, Upload, PenTool } from 'lucide-react';
 import { SKKNProject } from '../../types/skkn';
 import { generateDocxBlob } from '../../services/exportDocxService';
 import { generatePptxPresentation } from '../../services/exportPptxService';
@@ -11,6 +11,7 @@ interface HeaderProps {
   onOpenVoiceModal?: () => void;
   onOpenShareModal?: () => void;
   onOpenTemplateModal?: () => void;
+  onOpenContentDrivenModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,7 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenWorkspace,
   onOpenVoiceModal,
   onOpenShareModal,
-  onOpenTemplateModal
+  onOpenTemplateModal,
+  onOpenContentDrivenModal
 }) => {
   const handleQuickExportDocx = async () => {
     if (!activeProject) return;
@@ -80,6 +82,17 @@ export const Header: React.FC<HeaderProps> = ({
 
         {activeProject && (
           <div className="flex items-center space-x-2 border-l border-slate-800 pl-2">
+            {onOpenContentDrivenModal && (
+              <button
+                onClick={onOpenContentDrivenModal}
+                title="Nhập nội dung/tệp đính kèm để AI viết SKKN theo tư liệu"
+                className="p-2 rounded-lg bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 text-xs flex items-center space-x-1 transition"
+              >
+                <PenTool className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="hidden md:inline">Viết Theo Tư Liệu</span>
+              </button>
+            )}
+
             {onOpenTemplateModal && (
               <button
                 onClick={onOpenTemplateModal}
