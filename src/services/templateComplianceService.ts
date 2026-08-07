@@ -19,9 +19,10 @@ export const auditTemplateCompliance = (project: SKKNProject): TemplateComplianc
   const missingItems: MissingSubSectionItem[] = [];
 
   const requiredStructure = [
-    { section: 'I_MODAU', requiredSub: ['Lý do chọn đề tài', 'Mục đích nghiên cứu', 'Đối tượng và phạm vi nghiên cứu'] },
-    { section: 'II_COSO', requiredSub: ['Cơ sở lý luận và pháp lý (GDPT 2018)', 'Thực trạng trước khi áp dụng giải pháp', 'Các giải pháp thực hiện cải tiến', 'Hiệu quả thực nghiệm và đối chứng số liệu'] },
-    { section: 'IV_KETLUAN', requiredSub: ['Kết luận rút ra từ thực tiễn', 'Bài học kinh nghiệm', 'Kiến nghị với các cấp quản lý'] }
+    { section: 'I_MODAU', requiredSub: ['Lý do chọn sáng kiến', 'Mục tiêu nghiên cứu', 'Phạm vi nghiên cứu'] },
+    { section: 'II_COSO', requiredSub: ['Cơ sở lý luận', 'Cơ sở thực tiễn'] },
+    { section: 'III_NOIDUNG', requiredSub: ['Nội dung và kết quả nghiên cứu', 'Thảo luận kết quả'] },
+    { section: 'IV_KETLUAN', requiredSub: ['Kết luận', 'Kiến nghị và đề xuất'] }
   ];
 
   let totalRequired = 0;
@@ -37,8 +38,8 @@ export const auditTemplateCompliance = (project: SKKNProject): TemplateComplianc
         missingItems.push({
           sectionTitle: projSec ? projSec.romanTitle : req.section,
           missingSubTitle: subName,
-          importanceLevel: subName.includes('Giải pháp') || subName.includes('Thực trạng') ? 'CRITICAL' : 'WARNING',
-          recommendation: `Bổ sung ngay mục ${subName} để đảm bảo tính hợp lệ theo Nghị định 30/2020/NĐ-CP và mẫu của Sở GD&ĐT.`
+          importanceLevel: subName.includes('Nội dung') || subName.includes('Cơ sở') ? 'CRITICAL' : 'WARNING',
+          recommendation: `Bổ sung ngay mục "${subName}" để đảm bảo tuân thủ 100% Phụ lục II.1 - Công văn 3330/SGDĐT-GDTrH và Nghị định 30/2020/NĐ-CP.`
         });
       }
     });
