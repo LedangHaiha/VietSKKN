@@ -13,6 +13,7 @@ interface HeaderProps {
   onOpenTemplateModal?: () => void;
   onOpenContentDrivenModal?: () => void;
   onAutoGenerateFullSKKN?: () => void;
+  onOpenMasterPromptModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -24,6 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenTemplateModal,
   onOpenContentDrivenModal,
   onAutoGenerateFullSKKN,
+  onOpenMasterPromptModal,
 }) => {
   const handleQuickExportDocx = async () => {
     if (!activeProject) return;
@@ -92,6 +94,17 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span className="hidden md:inline">🚀 AI Tự Động Viết SKKN</span>
+              </button>
+            )}
+
+            {onOpenMasterPromptModal && (
+              <button
+                onClick={onOpenMasterPromptModal}
+                title="Xem và sao chép Master Prompt chuyên gia viết SKKN chuẩn Antigravity"
+                className="p-2 rounded-lg bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-700/60 text-xs flex items-center space-x-1 transition"
+              >
+                <Bot className="w-3.5 h-3.5 text-purple-400" />
+                <span className="hidden md:inline">Master Prompt AGY</span>
               </button>
             )}
 
